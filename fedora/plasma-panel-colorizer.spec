@@ -1,13 +1,13 @@
 %global plasmoid_id luisbocanegra.panel.colorizer
 
 Name:           plasma-panel-colorizer
-Version:        0.0.git.20251201
+Version:        5.6.0
 Release:        1%{?dist}
 Summary:        Latte-Dock and WM-style panel customization for KDE Plasma panels
 
 License:        GPLv3+
 URL:            https://github.com/luisbocanegra/plasma-panel-colorizer
-Source0:        %{url}/archive/%{version}/%{name}-%{version}.tar.gz
+Source0:        %{url}/archive/refs/tags/v%{version}.tar.gz
 
 BuildArch:      %{_arch}
 
@@ -31,11 +31,7 @@ Requires:       python3-gobject
 Recommends:     spectacle
 
 %description
-Panel Colorizer is a fully-featured Plasma widget that brings Latte-Dock and
-window manager status bar customization capabilities to the default KDE Plasma
-panels. It provides advanced control over panel background, widget islands,
-shadows, blur, spacing, and text/icon colors, along with preset management and
-D-Bus integration for automation.
+Panel Colorizer is a Plasma widget that brings Latte-Dock and window manager status bar customization capabilities to the default KDE Plasma panels. It provides advanced control over panel background, widget islands, shadows, blur, spacing, and text or icon colors, along with preset management and D-Bus integration for automation.
 
 %prep
 %autosetup -n %{name}-%{version}
@@ -50,25 +46,22 @@ python3 ./kpac i18n --no-merge
 
 %cmake_build
 
-%find_lang %{name} --all-name
-
 %install
 %cmake_install
-%fdupes %{buildroot}
 
-chmod 0755 %{buildroot}%{_datadir}/plasma/plasmoids/%{plasmoid_id}/contents/ui/tools/list_presets.sh
-chmod 0755 %{buildroot}%{_datadir}/plasma/plasmoids/%{plasmoid_id}/contents/ui/tools/gdbus_get_signal.sh
+if [ -f %{buildroot}%{_datadir}/plasma/plasmoids/%{plasmoid_id}/contents/ui/tools/list_presets.sh ]; then \
+    chmod 0755 %{buildroot}%{_datadir}/plasma/plasmoids/%{plasmoid_id}/contents/ui/tools/list_presets.sh; \
+fi
+if [ -f %{buildroot}%{_datadir}/plasma/plasmoids/%{plasmoid_id}/contents/ui/tools/gdbus_get_signal.sh ]; then \
+    chmod 0755 %{buildroot}%{_datadir}/plasma/plasmoids/%{plasmoid_id}/contents/ui/tools/gdbus_get_signal.sh; \
+fi
 
-%files -f %{name}.lang
+%files
 %license LICENSE
 %doc README.md CHANGELOG.md
-
 %{_datadir}/plasma/plasmoids/%{plasmoid_id}/
-
 %{_libdir}/qt6/qml/org/kde/plasma/panelcolorizer/
 
-%{_datadir}/kservices6/*panelcolorizer*.desktop
-
 %changelog
-* Sun Dec 01 2025 Peridot Augustus <dpierce82@gmail.com> - 0.0.git.20251201-1
-- Initial COPR packaging for plasma-panel-colorizer (Plasma 6)
+* Mon Dec  1 2025 Peridot Augustus <dpierce82@gmail.com> - 5.6.0-1
+- Initial COPR packaging for plasma-panel-colorizer
