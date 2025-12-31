@@ -1,7 +1,7 @@
 %global plasmoid_id luisbocanegra.panel.colorizer
 
 Name:           plasma-panel-colorizer
-Version:        6.0.0
+Version:        6.1.0
 Release:        1%{?dist}
 Summary:        Latte-Dock and WM-style panel customization for KDE Plasma panels
 
@@ -63,6 +63,9 @@ fi
 %{_libdir}/qt6/qml/org/kde/plasma/panelcolorizer/
 
 %changelog
+* Wed Dec 31 2025 Peridot Augustus <dpierce82@gmail.com> - 6.0.0-1
+- Update to 6.0.0
+
 * Fri Dec 19 2025 Peridot Augustus <dpierce82@gmail.com> - 6.0.0-1
 - Update to 6.0.0
 
