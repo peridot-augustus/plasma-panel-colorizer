@@ -8,12 +8,17 @@ Summary:        Latte-Dock and WM-style panel customization for KDE Plasma panel
 License:        GPL-3.0-or-later
 URL:            https://github.com/luisbocanegra/plasma-panel-colorizer
 Source0:        %{url}/archive/refs/tags/v%{version}/%{name}-%{version}.tar.gz
+Patch0:         plasma-panel-colorizer-7.0.1-qt6-components.patch
 
 BuildRequires:  cmake
 BuildRequires:  gcc-c++
 BuildRequires:  extra-cmake-modules
 BuildRequires:  gettext
 BuildRequires:  kf6-rpm-macros
+BuildRequires:  kf6-kcoreaddons-devel
+BuildRequires:  kf6-ki18n-devel
+BuildRequires:  kf6-kconfig-devel
+BuildRequires:  kf6-kconfigwidgets-devel
 BuildRequires:  libplasma-devel
 BuildRequires:  qt6-qtbase-devel
 BuildRequires:  qt6-qtdeclarative-devel
@@ -37,13 +42,6 @@ integration for automation.
 
 %prep
 %autosetup -p1 -n %{name}-%{version}
-
-# Upstream CMake enables the plugin build, but does not explicitly request
-# the Qt6 components that the plugin links against. That can cause configure
-# failure in RPM/COPR builds. Patch it in-place for now.
-sed -i \
-    's/find_package(Qt6 ${QT_MIN_VERSION} REQUIRED)/find_package(Qt6 ${QT_MIN_VERSION} REQUIRED COMPONENTS Gui Qml)/' \
-    CMakeLists.txt
 
 %build
 python3 ./kpac i18n --no-merge
@@ -75,7 +73,8 @@ fi
 %changelog
 * Fri Apr 10 2026 Peridot Augustus <dpierce82@gmail.com> - 7.0.1-1
 - Update to 7.0.1
-- Patch CMake to require Qt6 Gui and Qml when building plugin
+- Add missing KF6 BuildRequires
+- Add patch to request Qt6 Gui and Qml when building plugin
 
 * Wed Dec 31 2025 Peridot Augustus <dpierce82@gmail.com> - 6.0.0-1
 - Update to 6.0.0
