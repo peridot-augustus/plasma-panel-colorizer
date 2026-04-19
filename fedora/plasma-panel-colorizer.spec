@@ -8,7 +8,6 @@ Summary:        Latte-Dock and WM-style panel customization for KDE Plasma panel
 License:        GPL-3.0-or-later
 URL:            https://github.com/luisbocanegra/plasma-panel-colorizer
 Source0:        %{url}/archive/refs/tags/v%{version}/%{name}-%{version}.tar.gz
-Patch0:         plasma-panel-colorizer-7.0.1-qt6-components.patch
 
 BuildRequires:  cmake
 BuildRequires:  gcc-c++
@@ -41,7 +40,11 @@ spacing, and text or icon colors, along with preset management and D-Bus
 integration for automation.
 
 %prep
-%autosetup -p1 -n %{name}-%{version}
+%autosetup -n %{name}-%{version}
+
+sed -i \
+    's/find_package(Qt6 ${QT_MIN_VERSION} REQUIRED)/find_package(Qt6 ${QT_MIN_VERSION} REQUIRED COMPONENTS Gui Qml)/' \
+    CMakeLists.txt
 
 %build
 python3 ./kpac i18n --no-merge
@@ -71,10 +74,10 @@ fi
 %{_libdir}/qt6/qml/org/kde/plasma/panelcolorizer/
 
 %changelog
-* Fri Apr 10 2026 Peridot Augustus <dpierce82@gmail.com> - 7.0.1-1
+* Sun Apr 19 2026 Peridot Augustus <dpierce82@gmail.com> - 7.0.1-1
 - Update to 7.0.1
 - Add missing KF6 BuildRequires
-- Add patch to request Qt6 Gui and Qml when building plugin
+- Patch CMake to require Qt6 Gui and Qml when building plugin
 
 * Wed Dec 31 2025 Peridot Augustus <dpierce82@gmail.com> - 6.0.0-1
 - Update to 6.0.0
