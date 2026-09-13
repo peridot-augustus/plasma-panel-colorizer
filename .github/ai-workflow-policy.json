@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "repository": "peridot-augustus/plasma-panel-colorizer",
+  "classification": "fork",
+  "instructionEntryPoints": ["README.md", "AI_WORKFLOW.md"],
+  "taskContract": {
+    "requiredFields": ["objective", "acceptanceCriteria", "nonGoals", "allowedPaths", "verification", "manualChecks", "excludedEffects", "baseSha", "headSha"],
+    "planApprovalRequired": true,
+    "maxAttempts": 1
+  },
+  "verification": {
+    "commands": [],
+    "redGreen": "not-applicable",
+    "redGreenReason": "This downstream policy overlay does not change the upstream applet or C++ plugin; future maintained changes need a focused upstream-native build or runtime check."
+  },
+  "review": {
+    "mode": "advisory",
+    "candidate": "pull-request-head",
+    "reviewers": ["CodeRabbit"],
+    "unresolvedFindings": "report",
+    "policyVersion": "1"
+  },
+  "ai": {"present": false, "uses": []},
+  "effects": {
+    "allowed": ["repository static review", "downstream policy documentation"],
+    "approvalRequired": ["plugin build", "plugin installation", "Plasma runtime change", "package publication"],
+    "prohibited": ["upstream implementation or CI modification without a separate task", "automatic desktop mutation", "credential storage"]
+  }
+}

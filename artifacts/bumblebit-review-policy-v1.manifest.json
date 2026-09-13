@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "sourceRepository": "peridot-augustus/bumblebit",
+  "producingSourceCommit": "664994f80745fcafe4e58fc20df40de99c7ad26d",
+  "artifact": "artifacts/bumblebit-review-policy-v1.mjs",
+  "artifactSha256": "8daa6877f9e33aec7feb0372a99f03bebc4bb4bb497d91d7b36943ad3efee4af",
+  "checksum": "artifacts/bumblebit-review-policy-v1.sha256",
+  "sourceFiles": [
+    "src/review-policy.ts",
+    "src/review-policy-github.ts",
+    "src/cli.ts"
+  ],
+  "protectedPaths": [
+    ".github/CODEOWNERS",
+    ".github/ai-workflow-policy.json",
+    ".github/workflows/validate.yml",
+    ".github/workflows/review-policy.yml",
+    "artifacts/bumblebit-review-policy-v1.mjs",
+    "artifacts/bumblebit-review-policy-v1.sha256",
+    "artifacts/bumblebit-review-policy-v1.manifest.json"
+  ],
+  "portableGitProof": {
+    "objectFormat": "sha1",
+    "commitObjectBase64": "dHJlZSBiMDQwMGE0OGRjMWQ5NmI3ZWNmMDcwZjZlMzUyYzQ3M2RhOGQ4ZGFmCnBhcmVudCA0ZTgyYjQ2YWY3NmQxMTI3NjljNTE2Yjk3OTE2MjRjMjI0ZDhjMDkxCmF1dGhvciBEZW5uaXMgUGllcmNlIDxkcGllcmNlODJAZ21haWwuY29tPiAxNzg5MzI1NTQ5IC0wNzAwCmNvbW1pdHRlciBEZW5uaXMgUGllcmNlIDxkcGllcmNlODJAZ21haWwuY29tPiAxNzg5MzI1NTQ5IC0wNzAwCgpmaXg6IGhhcmRlbiByZXZpZXcgcG9saWN5IGV2aWRlbmNlCg==",
+    "trees": [
+      {
+        "path": "",
+        "oid": "b0400a48dc1d96b7ecf070f6e352c473da8d8daf",
+        "objectBase64": "MTAwNjQ0IC5jb2RlcmFiYml0LnlhbWwAPC++WiSNG0pmNeq8gdQx7aLFtX40MDAwMCAuZ2l0aHViAD8oM213UUWalzdBSsA/wEOIMo0jMTAwNjQ0IC5naXRpZ25vcmUAA0Rpnm2maTTIALVvpg1IxJ0ADdQxMDA2NDQgUkVBRE1FLm1kALxU2l2ABnYPy7sP0uVE2riWlBzTMTAwNjQ0IFZFUklGSUNBVElPTi5tZACz9xsPCJkfTV9/0cHcWV+z9Df5vzQwMDAwIGFydGlmYWN0cwDN5I7rzi5DwbKUD0EHQBL5hgb+DTQwMDAwIGJlbmNobWFyawDbune/m80XLf7XZUTgDpdUC6pqJDQwMDAwIGJpbgCfd57FI013z44nsymXp8Ruw6W9WzEwMDY0NCBiaW9tZS5qc29uAIpqnvK76tkuJ2Uc5e4dRnBQ/uQzNDAwMDAgY29uZmlnAFCwDO74kyVZxLlAxknnuX4lrOUGNDAwMDAgZG9jcwB7JN6Mi5E+BVtDYiywoN7Fm4SL0zEwMDY0NCBwYWNrYWdlLWxvY2suanNvbgAmMhIG15aK1iXQuV3Vlhd5hffrQzEwMDY0NCBwYWNrYWdlLmpzb24AQ2UoLKe3QVgFE47uLXmD7lLtjtc0MDAwMCBzYW5kYm94AD3rkWQLPtlFv7ZdXkaGPHS9/FTwNDAwMDAgc3JjAPi5pP0rvjwQtfivM5L90GbENbGbNDAwMDAgdGVzdABqjILUwCR4mKdhX2H0yCnjuYPPtDEwMDY0NCB0c2NvbmZpZy5qc29uAJXjXQ8cDjhd0GdZei4wX3U7eVGZ"
+      },
+      {
+        "path": ".github",
+        "oid": "3f28336d7751459a9737414ac03fc04388328d23",
+        "objectBase64": "MTAwNjQ0IENPREVPV05FUlMAMCuxw1dAbLQTLKgk+uX6kzzlrD8xMDA2NDQgYWktd29ya2Zsb3ctcG9saWN5Lmpzb24ApLAr3ULECOyJHflZwiFBHlYXzts0MDAwMCB3b3JrZmxvd3MAwqQlXRgwwq3pV6CDjBVt23mrVNI="
+      },
+      {
+        "path": ".github/workflows",
+        "oid": "c2a4255d1830c2ade957a0838c156ddb79ab54d2",
+        "objectBase64": "MTAwNjQ0IHJldmlldy1wb2xpY3kueW1sAHSEVV4SNriZX0xdYdGgaJD0PDhmMTAwNjQ0IHZhbGlkYXRlLnltbABTgAm2hhXwSgvGY5160hdfyExjQw=="
+      },
+      {
+        "path": "artifacts",
+        "oid": "cde48eebce2e43c1b2940f41074012f98606fe0d",
+        "objectBase64": "MTAwNjQ0IGJ1bWJsZWJpdC1yZXZpZXctcG9saWN5LXYxLm1hbmlmZXN0Lmpzb24AmixTGZfLkrSlQqHqryXnvwOYYRQxMDA2NDQgYnVtYmxlYml0LXJldmlldy1wb2xpY3ktdjEubWpzAL5y08tG5qzoS2JZkHC2VXUQgrqNMTAwNjQ0IGJ1bWJsZWJpdC1yZXZpZXctcG9saWN5LXYxLnNoYTI1NgAdUvZJHNzr6rYLghjPijPOjNfiYw=="
+      },
+      {
+        "path": "src",
+        "oid": "f8b9a4fd2bbe3c10b5f8af3392fdd066c435b19b",
+        "objectBase64": "NDAwMDAgYWRhcHRlcnMA9IrKKousmHZYyOkkXtdwWmewLPkxMDA2NDQgYXJ0aWZhY3QtYWRqdWRpY2F0aW9uLnRzAOCfFLKUYZ7Ty7K8/ofsLCHmd4r6MTAwNjQ0IGFydGlmYWN0LWNvbnRyYWN0LnRzANGLgIe9tJWSnmHMRVJA/nJEYBamMTAwNjQ0IGFydGlmYWN0LWZpbGUudHMAPaukjmuuj0aKfZGn2qaoNT2R3+sxMDA2NDQgYXJ0aWZhY3RzLnRzAMVBsJN9CQhohJciJYntW8fGtxbeMTAwNjQ0IGJlaGF2aW9yYWwtY2hlY2tzLnRzAFb37cUd3WdN4Ohnr1ZxrN8ynPiwMTAwNjQ0IGJlaGF2aW9yYWwtY29udHJhY3QudHMAuYKrINl/flL78jRYGVM2T2uxCJQxMDA2NDQgYmVuY2htYXJrLnRzAHtW+ELs1BAAK3TgzIqg9vxCozkvMTAwNjQ0IGNsaS50cwDmj0ynZwqrFOU5wOqHwdz7kLqovzEwMDY0NCBjb25maWctZXhwbGFuYXRpb24udHMA5IOTy+JkCZdAEAOOcsrbSqwFrvIxMDA2NDQgY29uZmlnLXJlc29sdXRpb24udHMAWQWtcIa3Y3vBOiIeBzklif+s7nsxMDA2NDQgY29uZmlnLnRzAChQQZIdoTNNCPnpkqqDwCddhMftMTAwNjQ0IGNvbnRleHQudHMAdohYmSazEmGSmOiJ3V0yJXMAspYxMDA2NDQgZG9jdG9yLnRzAGhVIN2izYbS7vWUzLYmu2O0EtKgMTAwNjQ0IGV2aWRlbmNlLWJyb2tlci50cwB1bNN5v0OISidyTaUXOHBd3mBE0TEwMDY0NCBmaW5kaW5ncy50cwCHwODy7TWIiNi7SXNz1/BCaVOwwjEwMDY0NCBoaXN0b3J5LWNvbnRyYWN0LnRzAKX1Ek3NHJVs9EFhJyPsuMx6ncILMTAwNjQ0IGhpc3RvcnktZmlsZS50cwCBJPh+AH8hSg/OaSaejyHUMDvAIzEwMDY0NCBoaXN0b3J5LnRzACKWa0QeFbEEVP2BDEgbDtC7hFdvMTAwNjQ0IGludmVzdGlnYXRlLnRzANU/HuMyL2LipaCZS9Av0Tnq/FKIMTAwNjQ0IGludmVzdGlnYXRpb24tY29udHJhY3QudHMAqFSgV/TwFKIF1rfzh8FWnBJ+0AMxMDA2NDQgb3BlcmF0b3ItY29uZmlnLWZpbGUudHMAqBoBD+ijr4Wkd3KFaNJsj7WMOXkxMDA2NDQgcGF0aC1tYXRjaGVyLnRzABxXUlvUCFkB76xrLbRF8R1UQDGGMTAwNjQ0IHB1Ymxpc2gudHMAE7kdIH+vg51Sewc6hmNGW05OK5wxMDA2NDQgcmVwb3J0LWlkZW50aXR5LnRzAJrAkC+7lGqkS//N4mEUrnh19cf1MTAwNjQ0IHJlcG9ydC50cwASkKIcsKXQzJK+eProRObPmF2edjEwMDY0NCByZXBvc2l0b3J5LnRzALnANmReTGxdGhCpoUbW64bd4Lv4MTAwNjQ0IHJldmlldy1ndWlkYW5jZS50cwAb//RbtLn4bMXnlYGzFHfBIDTD5DEwMDY0NCByZXZpZXctcG9saWN5LWdpdGh1Yi50cwCqA5RQqxt6Het82oB9D6ll2LZXqDEwMDY0NCByZXZpZXctcG9saWN5LnRzAG75/C57nlJR5Nq0yfaK0f1aE9WVMTAwNjQ0IHJldmlldy50cwD4j2w0siQ1amVuGsjWkGYrB5siDTQwMDAwIHJ1bnRpbWUAYmjU62z/wdvr5cvH5PxubYwQgtAxMDA2NDQgdmVyaWZpZXIudHMAij4ethloBR05+SoF8CB8FOSno7sxMDA2NDQgd29ya2Zsb3ctcG9saWN5LnRzAJyTomtSA0eRWBOl+g9M8iS3Prb/"
+      }
+    ],
+    "fileBlobs": {
+      ".github/CODEOWNERS": "302bb1c357406cb4132ca824fae5fa933ce5ac3f",
+      ".github/ai-workflow-policy.json": "a4b02bdd42c408ec891df959c221411e5617cedb",
+      ".github/workflows/validate.yml": "538009b68615f04a0bc6639d7ad2175fc84c6343",
+      ".github/workflows/review-policy.yml": "7484555e1236b8995f4c5d61d1a06890f43c3866",
+      "artifacts/bumblebit-review-policy-v1.mjs": "be72d3cb46e6ace84b62599070b655751082ba8d",
+      "artifacts/bumblebit-review-policy-v1.sha256": "1d52f6491cdcebeab60b8218cf8a33ce8cd7e263",
+      "src/review-policy.ts": "6ef9fc2e7b9e5251e4dab4c9f68ad1fd5a13d595",
+      "src/review-policy-github.ts": "aa039450ab1b7a1deb7cda807d0fa965d8b657a8",
+      "src/cli.ts": "e68f4ca7670aab14e539c0ea87c1dcfb90baa8bf"
+    }
+  },
+  "provenanceSemantics": "producingSourceCommit is the parent commit that first contains the final evaluator source, exact vendored artifact bytes, matching checksum, and every non-self-referential protected file. This later manifest commit intentionally does not self-reference. The embedded Git commit and tree objects form a portable content-addressed proof that remains verifiable after a squash merge or in a consumer repository without the producer history."
+}

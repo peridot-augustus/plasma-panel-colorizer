@@ -1,0 +1,205 @@
+name: Bumblebit Review Policy
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, ready_for_review]
+  pull_request_review:
+    types: [submitted, edited, dismissed]
+  pull_request_review_comment:
+    types: [created, edited, deleted]
+  issue_comment:
+    types: [created, edited, deleted]
+  workflow_run:
+    workflows: [Repository Validation]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      pull_request:
+        description: Pull-request number; required with head_sha
+        required: false
+        type: string
+      head_sha:
+        description: Exact pull-request head; required with pull_request
+        required: false
+        type: string
+
+jobs:
+  dispatch:
+    if: >-
+      github.event_name != 'workflow_dispatch' &&
+      (github.event_name != 'issue_comment' ||
+      (github.event.issue.pull_request &&
+      github.event.comment.user.login == 'coderabbitai[bot]' &&
+      github.event.comment.user.id == 136622811 &&
+      github.event.comment.user.type == 'Bot'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    permissions:
+      actions: write
+      contents: read
+      pull-requests: read
+    env:
+      GH_TOKEN: ${{ github.token }}
+      DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+      PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+      WORKFLOW_RUN_HEAD: ${{ github.event.workflow_run.head_sha }}
+      ISSUE_PR_NUMBER: ${{ github.event.issue.pull_request.url && github.event.issue.number || '' }}
+    steps:
+      - name: Check out trusted default-branch bootstrap state
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          path: .bumblebit-default
+          persist-credentials: false
+      - id: installed
+        name: Detect activated evaluator
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -f .bumblebit-default/.github/workflows/review-policy.yml ]; then
+            echo 'enabled=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'enabled=false' >> "$GITHUB_OUTPUT"
+            echo 'Bumblebit review policy is not installed on the default branch; bootstrap dispatch is inactive.'
+          fi
+      - name: Dispatch trusted default-branch evaluator
+        if: steps.installed.outputs.enabled == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--ref "$DEFAULT_BRANCH")
+          if [[ "$PR_NUMBER" =~ ^[1-9][0-9]*$ && "$PR_HEAD_SHA" =~ ^[a-f0-9]{40}$ ]]; then
+            args+=(-f "pull_request=$PR_NUMBER" -f "head_sha=$PR_HEAD_SHA")
+          elif [[ "$ISSUE_PR_NUMBER" =~ ^[1-9][0-9]*$ ]]; then
+            issue_head=$(gh api "/repos/$GITHUB_REPOSITORY/pulls/$ISSUE_PR_NUMBER" --jq .head.sha)
+            if [[ ! "$issue_head" =~ ^[a-f0-9]{40}$ ]]; then
+              printf '%s\n' 'Issue-comment pull-request head was unavailable; refusing dispatch.' >&2
+              exit 1
+            fi
+            args+=(-f "pull_request=$ISSUE_PR_NUMBER" -f "head_sha=$issue_head")
+          elif [[ "$WORKFLOW_RUN_HEAD" =~ ^[a-f0-9]{40}$ ]]; then
+            open_pulls=$(gh api "/repos/$GITHUB_REPOSITORY/pulls?state=open&per_page=100")
+            if ! jq -e '
+              type == "array" and length < 100 and
+              all(.[];
+                (.number | type) == "number" and .number > 0 and (.number % 1) == 0 and
+                .state == "open" and
+                (.base | type) == "object" and
+                (.base.ref | type) == "string" and (.base.ref | length) > 0 and
+                (.base.sha | type) == "string" and (.base.sha | test("^[a-f0-9]{40}$")) and
+                (.base.repo.full_name | type) == "string" and
+                (.base.repo.full_name | test("^[A-Za-z0-9][A-Za-z0-9_.-]*/[A-Za-z0-9][A-Za-z0-9_.-]*$")) and
+                (.head | type) == "object" and
+                (.head.sha | type) == "string" and (.head.sha | test("^[a-f0-9]{40}$"))
+              )
+            ' <<<"$open_pulls" >/dev/null; then
+              printf '%s\n' 'Open pull-request evidence was invalid or exceeded its safety bound.' >&2
+              exit 1
+            fi
+            matches=$(jq -c --arg head "$WORKFLOW_RUN_HEAD" \
+              '[.[] | select(.head.sha == $head)]' <<<"$open_pulls")
+            match_count=$(jq -r 'length' <<<"$matches")
+            if [[ "$match_count" == 0 ]]; then
+              echo 'Validation head has no open pull request; nothing to dispatch.'
+              exit 0
+            fi
+            if [[ "$match_count" != 1 ]]; then
+              printf '%s\n' 'Validation head did not resolve to one open pull request.' >&2
+              exit 1
+            fi
+            workflow_pr=$(jq -r '.[0].number' <<<"$matches")
+            if [[ ! "$workflow_pr" =~ ^[1-9][0-9]*$ ]]; then
+              printf '%s\n' 'Resolved pull-request identity was invalid.' >&2
+              exit 1
+            fi
+            args+=(-f "pull_request=$workflow_pr" -f "head_sha=$WORKFLOW_RUN_HEAD")
+          else
+            printf '%s\n' 'No exact pull-request identity was available; refusing dispatch.' >&2
+            exit 1
+          fi
+          gh workflow run review-policy.yml --repo "$GITHUB_REPOSITORY" "${args[@]}"
+
+  evaluate:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    environment: bumblebit-review-gate
+    concurrency:
+      group: review-policy-head-${{ github.repository }}-${{ inputs.head_sha }}
+      cancel-in-progress: false
+    permissions:
+      actions: read
+      checks: write
+      contents: read
+      pull-requests: read
+    env:
+      REPOSITORY: ${{ github.repository }}
+      GH_READ_TOKEN: ${{ github.token }}
+      PR_NUMBER: ${{ inputs.pull_request }}
+      PR_HEAD_SHA: ${{ inputs.head_sha }}
+      TRUSTED_DEFAULT_REF: ${{ github.event.repository.default_branch }}
+      TRUSTED_DEFAULT_SHA: ${{ github.sha }}
+    steps:
+      - name: Check out trusted default-branch implementation
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Verify trusted default-branch checkout
+        shell: bash
+        run: test "$(git rev-parse HEAD)" = "$TRUSTED_DEFAULT_SHA"
+      - name: Validate dispatched identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "$PR_NUMBER" =~ ^[1-9][0-9]*$ && "$PR_HEAD_SHA" =~ ^[a-f0-9]{40}$ ]]; then
+            exit 0
+          fi
+          printf '%s\n' 'Dispatch must contain one complete pull-request identity.' >&2
+          exit 1
+      - name: Verify vendored evaluator bytes
+        run: shasum -a 256 -c artifacts/bumblebit-review-policy-v1.sha256
+      - name: Create checks-only gate App token
+        id: gate-token
+        uses: actions/create-github-app-token@67018539274d69449ef7c02e8e71183d1719ab42 # v2.1.4
+        with:
+          app-id: ${{ secrets.BUMBLEBIT_APP_ID }}
+          private-key: ${{ secrets.BUMBLEBIT_APP_PRIVATE_KEY }}
+          permission-checks: write
+      - name: Evaluate and publish advisory shadow receipt
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ env.GH_READ_TOKEN }}
+        run: |
+          set -euo pipefail
+          identity=(--pr "$PR_NUMBER" --head "$PR_HEAD_SHA")
+          status=0
+          node artifacts/bumblebit-review-policy-v1.mjs \
+            --repository "$REPOSITORY" "${identity[@]}" \
+            --publication shadow \
+            --trusted-default-ref "$TRUSTED_DEFAULT_REF" \
+            --trusted-default-sha "$TRUSTED_DEFAULT_SHA" \
+            --validation-workflow .github/workflows/validate.yml \
+            --policy-version 1 || status=$?
+          if (( status > 1 )); then exit "$status"; fi
+      - name: Evaluate and publish enforceable distinct-App receipt
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ env.GH_READ_TOKEN }}
+          BUMBLEBIT_APP_TOKEN: ${{ steps.gate-token.outputs.token }}
+          BUMBLEBIT_PRODUCER_APP_ID: ${{ secrets.BUMBLEBIT_APP_ID }}
+        run: |
+          set -euo pipefail
+          identity=(--pr "$PR_NUMBER" --head "$PR_HEAD_SHA")
+          status=0
+          node artifacts/bumblebit-review-policy-v1.mjs \
+            --repository "$REPOSITORY" "${identity[@]}" \
+            --publication enforce \
+            --trusted-default-ref "$TRUSTED_DEFAULT_REF" \
+            --trusted-default-sha "$TRUSTED_DEFAULT_SHA" \
+            --producer-app-id "$BUMBLEBIT_PRODUCER_APP_ID" \
+            --producer-app-slug bumblebit-review-gate \
+            --validation-workflow .github/workflows/validate.yml \
+            --policy-version 1 || status=$?
+          exit "$status"

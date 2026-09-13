@@ -1,0 +1,154 @@
+name: Repository Validation
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+
+jobs:
+  identity:
+    name: repository-validation-identity
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - name: Check out exact candidate for identity proof
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Bind checked-out candidate to event head
+        env:
+          EXPECTED_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD_SHA"
+
+  repository-validation:
+    name: repository-validation
+    needs: identity
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - id: checkout
+        name: Check out exact pull-request head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+      - id: identity
+        name: Prove checkout matches pull-request head
+        continue-on-error: true
+        shell: bash
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          test "$(/usr/bin/git rev-parse HEAD)" = "$HEAD_SHA"
+      - id: policy
+        name: Validate fork policy profile
+        continue-on-error: true
+        env:
+          EXPECTED_REPOSITORY: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs = require("node:fs");
+          const requiredFields = ["objective", "acceptanceCriteria", "nonGoals", "allowedPaths", "verification", "manualChecks", "excludedEffects", "baseSha", "headSha"];
+          const fail = (message) => { throw new Error(message); };
+          const policy = JSON.parse(fs.readFileSync(".github/ai-workflow-policy.json", "utf8"));
+          if (policy.version !== 1 || policy.repository !== process.env.EXPECTED_REPOSITORY) fail("policy identity is invalid");
+          if (policy.classification !== "fork") fail("fork profile classification is required");
+          if (!Array.isArray(policy.instructionEntryPoints) || policy.instructionEntryPoints.length === 0) fail("instruction entry points are required");
+          if (policy.instructionEntryPoints.some((entry) => typeof entry !== "string" || entry.startsWith("/") || entry.includes("..") || entry.includes("\\"))) fail("instruction entry point is unsafe");
+          const task = policy.taskContract;
+          if (!task || !Array.isArray(task.requiredFields) || task.requiredFields.length !== requiredFields.length || requiredFields.some((field) => !task.requiredFields.includes(field)) || !Number.isInteger(task.maxAttempts) || task.maxAttempts < 1 || typeof task.planApprovalRequired !== "boolean") fail("task contract is invalid");
+          const verification = policy.verification;
+          if (!verification || verification.redGreen !== "not-applicable" || !Array.isArray(verification.commands) || verification.commands.length !== 0 || typeof verification.redGreenReason !== "string" || !verification.redGreenReason.trim()) fail("verification declaration is invalid");
+          const review = policy.review;
+          if (!review || review.mode !== "advisory" || review.candidate !== "pull-request-head" || !Array.isArray(review.reviewers) || review.reviewers.length === 0 || review.unresolvedFindings !== "report" || String(review.policyVersion) !== "1") fail("review declaration is invalid");
+          if (!policy.ai || policy.ai.present !== false || !Array.isArray(policy.ai.uses) || policy.ai.uses.length !== 0) fail("fork profile cannot declare AI uses");
+          for (const key of ["allowed", "approvalRequired", "prohibited"]) if (!policy.effects || !Array.isArray(policy.effects[key])) fail(`effects.${key} is invalid`);
+          console.log("Fork policy profile shape is valid");
+          NODE
+      - id: receipt
+        if: always()
+        name: Emit fail-closed bounded validation receipt
+        shell: bash
+        env:
+          REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          OUTCOMES: >-
+            {"checkout":"${{ steps.checkout.outcome }}","identity":"${{ steps.identity.outcome }}","policy":"${{ steps.policy.outcome }}"}
+        run: |
+          /usr/bin/python3 -I -S - <<'PY'
+          import hashlib, json, os, re, subprocess, sys
+          from pathlib import Path
+
+          receipt = {"version": 1, "repository": None, "pr": None, "baseSha": None,
+                     "headSha": None, "workflow": ".github/workflows/validate.yml",
+                     "profileSha256": None, "workflowSha256": None, "commands": [],
+                     "outcomes": {}, "result": "blocked", "reason": "validation-incomplete"}
+          try:
+              repository = os.environ.get("REPOSITORY", "")
+              if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]*/[A-Za-z0-9][A-Za-z0-9_.-]*", repository):
+                  raise ValueError("repository")
+              receipt["repository"] = repository
+              pr = os.environ.get("PR_NUMBER", "")
+              if not re.fullmatch(r"[1-9][0-9]{0,9}", pr):
+                  raise ValueError("pr")
+              receipt["pr"] = int(pr)
+              for field, variable in (("baseSha", "BASE_SHA"), ("headSha", "HEAD_SHA")):
+                  value = os.environ.get(variable, "")
+                  if not re.fullmatch(r"[0-9a-f]{40}", value):
+                      raise ValueError("sha")
+                  receipt[field] = value
+              outcomes = json.loads(os.environ.get("OUTCOMES", "{}"))
+              if set(outcomes) != {"checkout", "identity", "policy"} or any(value != "success" for value in outcomes.values()):
+                  raise ValueError("outcomes")
+              receipt["outcomes"] = outcomes
+              actual_head = subprocess.run(["/usr/bin/git", "rev-parse", "HEAD"], check=True,
+                  stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True, timeout=10).stdout.strip()
+              if actual_head != receipt["headSha"]:
+                  raise ValueError("head")
+              for name in [".github/ai-workflow-policy.json", receipt["workflow"]]:
+                  file = Path(name)
+                  if not file.is_file() or file.is_symlink() or file.stat().st_size > 1048576:
+                      raise ValueError("readback")
+                  raw = file.read_bytes()
+                  tracked = subprocess.run(["/usr/bin/git", "cat-file", "blob", receipt["headSha"] + ":" + name],
+                      check=True, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, timeout=10).stdout
+                  if raw != tracked:
+                      raise ValueError("git-object")
+                  digest = hashlib.sha256(raw).hexdigest()
+                  if name == ".github/ai-workflow-policy.json":
+                      profile = json.loads(raw)
+                      if profile.get("version") != 1 or profile.get("repository") != receipt["repository"]:
+                          raise ValueError("profile")
+                      receipt["profileSha256"] = digest
+                  else:
+                      receipt["workflowSha256"] = digest
+              receipt.update(result="pass", reason="validated")
+          except Exception:
+              receipt["reason"] = "identity-policy-or-readback-invalid"
+          encoded = json.dumps(receipt, separators=(",", ":"), sort_keys=True)
+          if len(encoded.encode("utf-8")) > 4096:
+              receipt.update(result="blocked", reason="receipt-too-large")
+              encoded = '{"version":1,"result":"blocked","reason":"receipt-too-large"}'
+          Path(".ai-workflow-receipt").mkdir(mode=0o700, exist_ok=True)
+          Path(".ai-workflow-receipt/receipt.json").write_text(encoded + "\n", encoding="utf-8")
+          print(encoded)
+          sys.exit(0 if receipt["result"] == "pass" else 1)
+          PY
+      - name: Upload validation receipt
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: repository-validation-receipt
+          path: .ai-workflow-receipt/receipt.json
+          if-no-files-found: error
+          retention-days: 1
