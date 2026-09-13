@@ -232,7 +232,12 @@ export async function loadTrustedBase(repository, ref, sha, protectedPaths) {
 
 async function responseJson(response) {
   if (!response.ok) {
-    if (response.status === 403 || response.status === 429)
+    if (
+      response.status === 429 ||
+      (response.status === 403 &&
+        (response.headers.get("x-ratelimit-remaining") === "0" ||
+          response.headers.has("retry-after")))
+    )
       throw new EvidenceError("rate-limited");
     throw new EvidenceError("request-failed", response.status);
   }
@@ -269,13 +274,13 @@ function parseReviewVerdict(body) {
 function parseCleanCommentHead(body) {
   if (typeof body !== "string" || !/No actionable comments were generated/i.test(body))
     return null;
-  const match = body.match(/between\s+[0-9a-f]{7,40}\s+and\s+([0-9a-f]{7,40})/i);
+  const match = body.match(/between\s+[0-9a-f]{40}\s+and\s+([0-9a-f]{40})/i);
   return match
     ? { commitSha: match[1].toLowerCase(), verdictStatus: "parsed" }
     : { commitSha: null, verdictStatus: "unparseable" };
 }
 
-export function createGitHub(token, request = fetch) {
+export function createGitHub(token, request = fetch, requestTimeoutMs = 30_000) {
   const call = async (path, init = {}) => {
     const url = new URL(path, "https://api.github.com");
     if (url.origin !== "https://api.github.com") throw new EvidenceError("request-failed");
@@ -283,6 +288,7 @@ export function createGitHub(token, request = fetch) {
     try {
       response = await request(url, {
         ...init,
+        signal: init.signal ?? AbortSignal.timeout(requestTimeoutMs),
         redirect: "error",
         headers: {
           Accept: "application/vnd.github+json",

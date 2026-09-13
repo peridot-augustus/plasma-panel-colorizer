@@ -15,7 +15,7 @@ on:
   workflow_dispatch:
     inputs:
       pull_request:
-        description: Pull-request number; required unless workflow_run_head is supplied
+        description: Pull-request number; required with head_sha
         required: false
         type: string
       head_sha:
@@ -99,7 +99,12 @@ jobs:
             fi
             matches=$(jq -c --arg head "$WORKFLOW_RUN_HEAD" \
               '[.[] | select(.head.sha == $head)]' <<<"$open_pulls")
-            if [[ $(jq -r 'length' <<<"$matches") != 1 ]]; then
+            match_count=$(jq -r 'length' <<<"$matches")
+            if [[ "$match_count" == 0 ]]; then
+              echo 'Validation head has no open pull request; nothing to dispatch.'
+              exit 0
+            fi
+            if [[ "$match_count" != 1 ]]; then
               printf '%s\n' 'Validation head did not resolve to one open pull request.' >&2
               exit 1
             fi
@@ -122,7 +127,7 @@ jobs:
     environment: bumblebit-review-gate
     concurrency:
       group: review-policy-head-${{ github.repository }}-${{ inputs.head_sha }}
-      cancel-in-progress: true
+      cancel-in-progress: false
     permissions:
       actions: read
       checks: write
@@ -161,6 +166,7 @@ jobs:
         with:
           app-id: ${{ secrets.BUMBLEBIT_APP_ID }}
           private-key: ${{ secrets.BUMBLEBIT_APP_PRIVATE_KEY }}
+          permission-checks: write
       - name: Evaluate and publish advisory shadow receipt
         shell: bash
         env:
