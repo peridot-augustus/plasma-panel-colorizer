@@ -8,8 +8,25 @@ permissions:
   contents: read
 
 jobs:
+  identity:
+    name: repository-validation-identity
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - name: Check out exact candidate for identity proof
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Bind checked-out candidate to event head
+        env:
+          EXPECTED_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD_SHA"
+
   repository-validation:
     name: repository-validation
+    needs: identity
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
