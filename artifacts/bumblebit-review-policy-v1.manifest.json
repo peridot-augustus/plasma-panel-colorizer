@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "sourceRepository": "peridot-augustus/bumblebit",
+  "producingSourceCommit": "56a7db1ca2b2762b4a20b96a4cf058d1b13ec0d0",
+  "artifact": "artifacts/bumblebit-review-policy-v1.mjs",
+  "artifactSha256": "bd26922c554f7643c1b754b045508ebb0103c0c2fff6d3c539b4caeebbefb4ab",
+  "checksum": "artifacts/bumblebit-review-policy-v1.sha256",
+  "sourceFiles": [
+    "src/review-policy.ts",
+    "src/review-policy-github.ts",
+    "src/cli.ts"
+  ],
+  "protectedPaths": [
+    ".github/CODEOWNERS",
+    ".github/ai-workflow-policy.json",
+    ".github/workflows/validate.yml",
+    ".github/workflows/review-policy.yml",
+    "artifacts/bumblebit-review-policy-v1.mjs",
+    "artifacts/bumblebit-review-policy-v1.sha256",
+    "artifacts/bumblebit-review-policy-v1.manifest.json"
+  ],
+  "portableGitProof": {
+    "objectFormat": "sha1",
+    "commitObjectBase64": "dHJlZSA2NDBmNWMxMzNkMDQ2NjAwNDA5ODI5YTRjOWNlZDQ0ZWNkYzNkMGQ0CnBhcmVudCA2YTFjMmEzYWFlZmUwMTJmMTc2OGY0ZjBlNDcxZjFmNzc1NGNlMjgxCmF1dGhvciBEZW5uaXMgUGllcmNlIDxkcGllcmNlODJAZ21haWwuY29tPiAxNzg5MzIwNDY5IC0wNzAwCmNvbW1pdHRlciBEZW5uaXMgUGllcmNlIDxkcGllcmNlODJAZ21haWwuY29tPiAxNzg5MzIwNDY5IC0wNzAwCgpmaXg6IGhhcmRlbiByZXZpZXcgdmVyZGljdCBhbmQgd29ya2Zsb3cgbG9va3VwCg==",
+    "trees": [
+      {
+        "path": "",
+        "oid": "640f5c133d046600409829a4c9ced44ecdc3d0d4",
+        "objectBase64": "MTAwNjQ0IC5jb2RlcmFiYml0LnlhbWwAPC++WiSNG0pmNeq8gdQx7aLFtX40MDAwMCAuZ2l0aHViAKDJj3I8fkR6jMmmCMQQ1h5MCUdMMTAwNjQ0IC5naXRpZ25vcmUAA0Rpnm2maTTIALVvpg1IxJ0ADdQxMDA2NDQgUkVBRE1FLm1kALxU2l2ABnYPy7sP0uVE2riWlBzTMTAwNjQ0IFZFUklGSUNBVElPTi5tZACz9xsPCJkfTV9/0cHcWV+z9Df5vzQwMDAwIGFydGlmYWN0cwBmS7TO3lSpq/ays6FGQr2CcwslUjQwMDAwIGJlbmNobWFyawDbune/m80XLf7XZUTgDpdUC6pqJDQwMDAwIGJpbgCfd57FI013z44nsymXp8Ruw6W9WzEwMDY0NCBiaW9tZS5qc29uAIpqnvK76tkuJ2Uc5e4dRnBQ/uQzNDAwMDAgY29uZmlnAFCwDO74kyVZxLlAxknnuX4lrOUGNDAwMDAgZG9jcwB7JN6Mi5E+BVtDYiywoN7Fm4SL0zEwMDY0NCBwYWNrYWdlLWxvY2suanNvbgAmMhIG15aK1iXQuV3Vlhd5hffrQzEwMDY0NCBwYWNrYWdlLmpzb24AQ2UoLKe3QVgFE47uLXmD7lLtjtc0MDAwMCBzYW5kYm94AD3rkWQLPtlFv7ZdXkaGPHS9/FTwNDAwMDAgc3JjACw+lVDA99oenOAlme8nCGOk4gsTNDAwMDAgdGVzdAAYNWnMqwFJIidSRXFRON7EBEow0DEwMDY0NCB0c2NvbmZpZy5qc29uAJXjXQ8cDjhd0GdZei4wX3U7eVGZ"
+      },
+      {
+        "path": ".github",
+        "oid": "a0c98f723c7e447a8cc9a608c410d61e4c09474c",
+        "objectBase64": "MTAwNjQ0IENPREVPV05FUlMAMCuxw1dAbLQTLKgk+uX6kzzlrD8xMDA2NDQgYWktd29ya2Zsb3ctcG9saWN5Lmpzb24ApLAr3ULECOyJHflZwiFBHlYXzts0MDAwMCB3b3JrZmxvd3MAQIHE9xX+yKvvzNumiw7tlst20VM="
+      },
+      {
+        "path": "artifacts",
+        "oid": "664bb4cede54a9abf6b2b3a14642bd82730b2552",
+        "objectBase64": "MTAwNjQ0IGJ1bWJsZWJpdC1yZXZpZXctcG9saWN5LXYxLm1hbmlmZXN0Lmpzb24Ac1l9M6bwHWg7l/+8yJrR1uw+iWwxMDA2NDQgYnVtYmxlYml0LXJldmlldy1wb2xpY3ktdjEubWpzAI6yMyDjBo5IFc7dhMDZUFwHrktTMTAwNjQ0IGJ1bWJsZWJpdC1yZXZpZXctcG9saWN5LXYxLnNoYTI1NgBZEXsZvBzyOfObH17qIMisquEiAg=="
+      },
+      {
+        "path": "src",
+        "oid": "2c3e9550c0f7da1e9ce02599ef270863a4e20b13",
+        "objectBase64": "NDAwMDAgYWRhcHRlcnMA9IrKKousmHZYyOkkXtdwWmewLPkxMDA2NDQgYXJ0aWZhY3QtYWRqdWRpY2F0aW9uLnRzAOCfFLKUYZ7Ty7K8/ofsLCHmd4r6MTAwNjQ0IGFydGlmYWN0LWNvbnRyYWN0LnRzANGLgIe9tJWSnmHMRVJA/nJEYBamMTAwNjQ0IGFydGlmYWN0LWZpbGUudHMAPaukjmuuj0aKfZGn2qaoNT2R3+sxMDA2NDQgYXJ0aWZhY3RzLnRzAMVBsJN9CQhohJciJYntW8fGtxbeMTAwNjQ0IGJlaGF2aW9yYWwtY2hlY2tzLnRzAFb37cUd3WdN4Ohnr1ZxrN8ynPiwMTAwNjQ0IGJlaGF2aW9yYWwtY29udHJhY3QudHMAuYKrINl/flL78jRYGVM2T2uxCJQxMDA2NDQgYmVuY2htYXJrLnRzAHtW+ELs1BAAK3TgzIqg9vxCozkvMTAwNjQ0IGNsaS50cwDmj0ynZwqrFOU5wOqHwdz7kLqovzEwMDY0NCBjb25maWctZXhwbGFuYXRpb24udHMA5IOTy+JkCZdAEAOOcsrbSqwFrvIxMDA2NDQgY29uZmlnLXJlc29sdXRpb24udHMAWQWtcIa3Y3vBOiIeBzklif+s7nsxMDA2NDQgY29uZmlnLnRzAChQQZIdoTNNCPnpkqqDwCddhMftMTAwNjQ0IGNvbnRleHQudHMAdohYmSazEmGSmOiJ3V0yJXMAspYxMDA2NDQgZG9jdG9yLnRzAGhVIN2izYbS7vWUzLYmu2O0EtKgMTAwNjQ0IGV2aWRlbmNlLWJyb2tlci50cwB1bNN5v0OISidyTaUXOHBd3mBE0TEwMDY0NCBmaW5kaW5ncy50cwCHwODy7TWIiNi7SXNz1/BCaVOwwjEwMDY0NCBoaXN0b3J5LWNvbnRyYWN0LnRzAKX1Ek3NHJVs9EFhJyPsuMx6ncILMTAwNjQ0IGhpc3RvcnktZmlsZS50cwCBJPh+AH8hSg/OaSaejyHUMDvAIzEwMDY0NCBoaXN0b3J5LnRzACKWa0QeFbEEVP2BDEgbDtC7hFdvMTAwNjQ0IGludmVzdGlnYXRlLnRzANU/HuMyL2LipaCZS9Av0Tnq/FKIMTAwNjQ0IGludmVzdGlnYXRpb24tY29udHJhY3QudHMAqFSgV/TwFKIF1rfzh8FWnBJ+0AMxMDA2NDQgb3BlcmF0b3ItY29uZmlnLWZpbGUudHMAqBoBD+ijr4Wkd3KFaNJsj7WMOXkxMDA2NDQgcGF0aC1tYXRjaGVyLnRzABxXUlvUCFkB76xrLbRF8R1UQDGGMTAwNjQ0IHB1Ymxpc2gudHMAE7kdIH+vg51Sewc6hmNGW05OK5wxMDA2NDQgcmVwb3J0LWlkZW50aXR5LnRzAJrAkC+7lGqkS//N4mEUrnh19cf1MTAwNjQ0IHJlcG9ydC50cwASkKIcsKXQzJK+eProRObPmF2edjEwMDY0NCByZXBvc2l0b3J5LnRzALnANmReTGxdGhCpoUbW64bd4Lv4MTAwNjQ0IHJldmlldy1ndWlkYW5jZS50cwAb//RbtLn4bMXnlYGzFHfBIDTD5DEwMDY0NCByZXZpZXctcG9saWN5LWdpdGh1Yi50cwAsT+57szIfsMfM20weag/gb6OjUzEwMDY0NCByZXZpZXctcG9saWN5LnRzAG75/C57nlJR5Nq0yfaK0f1aE9WVMTAwNjQ0IHJldmlldy50cwD4j2w0siQ1amVuGsjWkGYrB5siDTQwMDAwIHJ1bnRpbWUAYmjU62z/wdvr5cvH5PxubYwQgtAxMDA2NDQgdmVyaWZpZXIudHMAij4ethloBR05+SoF8CB8FOSno7sxMDA2NDQgd29ya2Zsb3ctcG9saWN5LnRzAJyTomtSA0eRWBOl+g9M8iS3Prb/"
+      }
+    ],
+    "fileBlobs": {
+      ".github/CODEOWNERS": "302bb1c357406cb4132ca824fae5fa933ce5ac3f",
+      "artifacts/bumblebit-review-policy-v1.mjs": "8eb23320e3068e4815cedd84c0d9505c07ae4b53",
+      "artifacts/bumblebit-review-policy-v1.sha256": "59117b19bc1cf239f39b1f5eea20c8acaae12202",
+      "src/review-policy.ts": "6ef9fc2e7b9e5251e4dab4c9f68ad1fd5a13d595",
+      "src/review-policy-github.ts": "2c4fee7bb3321fb0c7ccdb4c1e6a0fe06fa3a353",
+      "src/cli.ts": "e68f4ca7670aab14e539c0ea87c1dcfb90baa8bf"
+    }
+  },
+  "provenanceSemantics": "producingSourceCommit is the parent commit that first contains the final evaluator source, exact vendored artifact bytes, and matching checksum. This later manifest commit intentionally does not self-reference. The embedded Git commit and tree objects form a portable content-addressed proof that remains verifiable after a squash merge or in a consumer repository without the producer history."
+}
